@@ -42,8 +42,10 @@ else:
 		merge_name = Popen(['git','config','branch.%s.merge' % branch], stdout=PIPE).communicate()[0].decode("utf-8").strip()
 		if remote_name == '.': # local
 			remote_ref = merge_name
+                        upstream = merge_name[11:]
 		else:
 			remote_ref = 'refs/remotes/%s/%s' % (remote_name, merge_name[11:])
+                        upstream = '%s/%s' % (remote_name, merge_name[11:])
 		revgit = Popen(['git', 'rev-list', '--left-right', '%s...HEAD' % remote_ref],stdout=PIPE, stderr=PIPE)
 		revlist = revgit.communicate()[0]
 		if revgit.poll(): # fallback to local
@@ -60,6 +62,7 @@ out = ' '.join([
 	conflicts,
 	changed,
 	untracked,
+        upstream,
 	])
 print(out, end='')
 
